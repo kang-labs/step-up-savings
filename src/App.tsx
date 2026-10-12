@@ -24,12 +24,17 @@ export default function App() {
                 <PlanTabs plans={plans} activeId={active.id} onSelect={select} onAdd={add} />
             </header>
             {/* key: 탭을 바꾸면 입력 커서·삭제 확인 같은 화면 상태를 초기화한다. */}
+            {/* 폭 600px 이상이면 왼쪽 입력·요약, 오른쪽 결과·차트 2열. 좁으면 .col 상자가 사라져 한 줄로 쌓인다. */}
             <main className="app-main" key={active.id}>
-                <PlanForm plan={active} today={today} onChange={patch => update(active.id, patch)} />
-                <SummaryBar plan={active} result={result} />
-                <ResultCards result={result} stepUp={active.stepUp} />
-                {result.status === 'ok' && result.stepUp.ok && <YearlyChart rows={result.stepUp.rows} flatMonthly={result.flatMonthly} />}
-                <DeletePlan disabled={plans.length <= 1} onDelete={() => remove(active.id)} />
+                <div className="col col-input">
+                    <PlanForm plan={active} today={today} onChange={patch => update(active.id, patch)} />
+                    <SummaryBar plan={active} result={result} />
+                    <DeletePlan disabled={plans.length <= 1} onDelete={() => remove(active.id)} />
+                </div>
+                <div className="col col-result">
+                    <ResultCards result={result} stepUp={active.stepUp} />
+                    {result.status === 'ok' && result.stepUp.ok && <YearlyChart rows={result.stepUp.rows} flatMonthly={result.flatMonthly} />}
+                </div>
             </main>
         </div>
     )

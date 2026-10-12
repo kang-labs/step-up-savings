@@ -61,35 +61,38 @@ function StepUpTable({ rows, total }: { rows: YearRow[]; total: number }) {
                 <span className="unit">원</span>
                 <span className="result-from">부터</span>
             </p>
-            <table className="year-table">
-                <thead>
-                    <tr>
-                        <th scope="col">연도</th>
-                        <th scope="col">개월</th>
-                        <th scope="col">월 저축액</th>
-                        <th scope="col">연간 합계</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {rows.map((r, i) => (
-                        <tr key={r.year} className={i === 0 ? 'is-first' : undefined}>
-                            <td>
-                                {r.year}
-                                {i === 0 && <span className="tag">첫해</span>}
-                            </td>
-                            <td>{r.months}</td>
-                            <td className="monthly">{formatWon(r.monthly)}</td>
-                            <td>{formatWon(r.yearTotal)}</td>
+            {/* 표가 카드보다 넓어지면(아주 큰 금액·좁은 화면) 표만 가로로 스크롤 */}
+            <div className="table-scroll">
+                <table className="year-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">연도</th>
+                            <th scope="col">개월</th>
+                            <th scope="col">월 저축액</th>
+                            <th scope="col">연간 합계</th>
                         </tr>
-                    ))}
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colSpan={3}>총 저축액</td>
-                        <td>{formatWon(total)}</td>
-                    </tr>
-                </tfoot>
-            </table>
+                    </thead>
+                    <tbody>
+                        {rows.map((r, i) => (
+                            <tr key={r.year} className={i === 0 ? 'is-first' : undefined}>
+                                <td>
+                                    {r.year}
+                                    {i === 0 && <span className="tag">첫해</span>}
+                                </td>
+                                <td>{r.months}</td>
+                                <td className="monthly">{formatWon(r.monthly)}</td>
+                                <td>{formatWon(r.yearTotal)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colSpan={3}>총 저축액</td>
+                            <td>{formatWon(total)}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </>
     )
 }

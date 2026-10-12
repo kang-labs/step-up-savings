@@ -6,11 +6,12 @@ const VALUE_WIDTH = 46 // '1,234.5만' 정도가 들어가는 폭
 const YEAR_WIDTH = 34 // '2026'
 const MONTHS_WIDTH = 40 // '12개월'
 
-export function chartLabels(count: number, slot: number): ChartLabels {
+/** picked: 사용자가 탭(클릭)한 연도 — 라벨을 솎아내는 중에도 그 해 금액은 보여 준다. */
+export function chartLabels(count: number, slot: number, picked: number | null = null): ChartLabels {
     const yearEvery = Math.max(1, Math.ceil(YEAR_WIDTH / slot))
     return {
-        // 칸이 좁으면 첫해와 마지막 해 금액만 보여준다.
-        value: Array.from({ length: count }, (_, i) => slot >= VALUE_WIDTH || i === 0 || i === count - 1),
+        // 칸이 좁으면 첫해와 마지막 해(그리고 탭한 해) 금액만 보여준다.
+        value: Array.from({ length: count }, (_, i) => slot >= VALUE_WIDTH || i === 0 || i === count - 1 || i === picked),
         year: Array.from({ length: count }, (_, i) => i % yearEvery === 0),
         months: slot >= MONTHS_WIDTH,
     }

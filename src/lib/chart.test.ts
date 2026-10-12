@@ -22,6 +22,16 @@ describe('chartLabels', () => {
     it('handles a single bar', () => {
         expect(chartLabels(1, 368)).toEqual({ value: [true], year: [true], months: true })
     })
+
+    it('always shows the amount of the year the user tapped', () => {
+        const labels = chartLabels(20, 18.4, 7)
+        expect(labels.value[7]).toBe(true)
+        expect(labels.value.filter(Boolean)).toHaveLength(3)
+    })
+
+    it('ignores a tapped year that no longer exists', () => {
+        expect(chartLabels(4, 92, 9).value).toEqual([true, true, true, true])
+    })
 })
 
 describe('valueLabelY', () => {

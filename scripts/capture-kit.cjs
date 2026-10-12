@@ -19,6 +19,8 @@ async function loadWithSeed(win, seed) {
     win.webContents.reloadIgnoringCache()
     await reloaded
     await run('document.fonts.ready.then(() => true)')
+    // 다시 읽으면 브라우저가 이전 스크롤 위치를 복원하므로 맨 위에서 시작하게 한다.
+    await run('window.scrollTo(0, 0)')
     await sleep(200)
 }
 

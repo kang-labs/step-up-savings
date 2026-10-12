@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { chartLabels, valueLabelY } from '../lib/chart.ts'
 import { compactWon, formatWon } from '../lib/format.ts'
 import type { YearRow } from '../lib/savings.ts'
@@ -8,8 +9,9 @@ const W = 400
 const H = 220
 const PAD = { top: 30, right: 16, bottom: 44, left: 16 }
 
-/** 연도별 증액 월 저축액(막대)과 균등 월 저축액(점선) 비교. 막대는 0원에서 시작한다. */
+/** 연도별 증액 월 저축액(막대)과 균등 월 저축액(점선) 비교. 막대는 0원에서 시작한다. 연도 칸을 탭(클릭)하면 그 해 금액을 고정해서 보여 준다. */
 export function YearlyChart({ rows, flatMonthly }: Props) {
+    const [picked, setPicked] = useState<number | null>(null)
     const innerW = W - PAD.left - PAD.right
     const innerH = H - PAD.top - PAD.bottom
     const baseY = PAD.top + innerH
@@ -18,7 +20,7 @@ export function YearlyChart({ rows, flatMonthly }: Props) {
     const max = Math.max(flatMonthly, ...rows.map(r => r.monthly)) * 1.1
     const y = (v: number) => PAD.top + innerH * (1 - v / max)
     const cx = (i: number) => PAD.left + slot * (i + 0.5)
-    const labels = chartLabels(rows.length, slot)
+    const labels = chartLabels(rows.length, slot, picked)
     const flatY = y(flatMonthly)
 
     return (
@@ -38,7 +40,11 @@ export function YearlyChart({ rows, flatMonthly }: Props) {
             </div>
             <svg className="chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="연도별 증액 월 저축액과 균등 월 저축액 비교">
                 {rows.map((r, i) => (
-                    <g key={r.year} className="chart-col">
+                    <g
+                        key={r.year}
+                        className={i === picked ? 'chart-col is-picked' : 'chart-col'}
+                        onClick={() => setPicked(p => (p === i ? null : i))}
+                    >
                         <path
                             className={i === 0 ? 'chart-bar is-first' : 'chart-bar'}
                             d={barPath(cx(i) - barW / 2, y(r.monthly), barW, baseY - y(r.monthly), 4)}
