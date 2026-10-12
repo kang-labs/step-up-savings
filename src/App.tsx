@@ -1,3 +1,4 @@
+import logoUrl from './assets/logo.svg'
 import { DeletePlan } from './components/DeletePlan.tsx'
 import { PlanForm } from './components/PlanForm.tsx'
 import { PlanTabs } from './components/PlanTabs.tsx'
@@ -17,7 +18,7 @@ export default function App() {
         <div className="app">
             <header className="app-header">
                 <div className="brand">
-                    <BrandMark />
+                    <img className="brand-mark" src={logoUrl} alt="" />
                     <h1 className="brand-title">증액저축 계산기</h1>
                 </div>
                 <PlanTabs plans={plans} activeId={active.id} onSelect={select} onAdd={add} />
@@ -31,15 +32,5 @@ export default function App() {
                 <DeletePlan disabled={plans.length <= 1} onDelete={() => remove(active.id)} />
             </main>
         </div>
-    )
-}
-
-function BrandMark() {
-    return (
-        <svg className="brand-mark" viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="3" y="13" width="4.5" height="8" rx="1.5" />
-            <rect x="9.75" y="9" width="4.5" height="12" rx="1.5" />
-            <rect x="16.5" y="4" width="4.5" height="17" rx="1.5" />
-        </svg>
     )
 }
