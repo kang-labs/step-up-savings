@@ -1,0 +1,8 @@
+{
+    "plans": [
+        { "id": "s1", "name": "아주긴플랜이름아주긴플랜이름아주긴", "goal": 999999999999, "currentDate": null, "endDate": "2045-12-31", "asset": 123456789012, "payday": 31, "stepUp": 9999999 },
+        { "id": "s2", "name": "두 번째 플랜", "goal": 50000000, "currentDate": null, "endDate": "2029-12-31", "asset": 0, "payday": 21, "stepUp": 100000 },
+        { "id": "s3", "name": "세 번째 플랜", "goal": 30000000, "currentDate": null, "endDate": "2028-12-31", "asset": 1000000, "payday": 10, "stepUp": 50000 }
+    ],
+    "activeId": "s1"
+}
