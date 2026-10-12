@@ -10,7 +10,7 @@ React 19 + Vite 8 + TypeScript 6 로 만든 **웹 화면 하나(dist/)**를 두 
 - PC: Electron 44 portable exe → `release/증액저축계산기.exe`
 - 안드로이드: Capacitor 8 → `release/증액저축-debug.apk`, 서명 빌드 `release/증액저축.aab`·`증액저축.apk`
 
-사용자와는 한국어로 대화하고, 코드 주석·문서도 한국어로 쓴다.
+사용자와는 한국어로 대화하고, 코드 주석·문서도 한국어로 쓴다. 브랜치·병합·PR 같은 git 선택지를 물을 때는 용어만 늘어놓지 말고 각 선택이 실제로 무엇을 하는지 쉬운 말로 설명한다.
 
 ## 지켜야 할 규칙
 
