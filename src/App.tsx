@@ -6,12 +6,12 @@ import { ResultCards } from './components/ResultCards.tsx'
 import { SummaryBar } from './components/SummaryBar.tsx'
 import { YearlyChart } from './components/YearlyChart.tsx'
 import { usePlans } from './hooks/usePlans.ts'
-import { todayISO } from './lib/format.ts'
+import { useToday } from './hooks/useToday.ts'
 import { calcPlan } from './lib/savings.ts'
 
 export default function App() {
     const { plans, active, select, add, update, remove } = usePlans()
-    const today = todayISO()
+    const today = useToday()
     const result = calcPlan({ ...active, currentDate: active.currentDate ?? today })
 
     return (

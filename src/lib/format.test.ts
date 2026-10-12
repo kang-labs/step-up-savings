@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { MAX_MONEY, caretAfterDigits, compactWon, formatWon, formatYMD, koreanUnit, moneyHint, parseMoney, todayISO } from './format.ts'
+import { MAX_MONEY, caretAfterDigits, compactWon, formatWon, formatYMD, koreanUnit, moneyHint, msUntilNextDay, parseMoney, todayISO } from './format.ts'
 
 describe('formatWon', () => {
     it('adds thousands separators', () => {
@@ -65,6 +65,12 @@ describe('dates', () => {
 
     it('formatYMD pads month and day', () => {
         expect(formatYMD({ y: 2026, m: 1, d: 5 })).toBe('2026.01.05')
+    })
+
+    it('msUntilNextDay counts the time left until local midnight (리뷰 I3: 자정이 지나면 오늘을 다시 읽음)', () => {
+        expect(msUntilNextDay(new Date(2026, 9, 12, 23, 59, 30))).toBe(30_000)
+        expect(msUntilNextDay(new Date(2026, 9, 12, 0, 0, 0))).toBe(86_400_000)
+        expect(msUntilNextDay(new Date(2026, 11, 31, 23, 0, 0))).toBe(3_600_000)
     })
 })
 

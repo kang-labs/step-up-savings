@@ -45,6 +45,12 @@ export function todayISO(now: Date = new Date()): string {
     return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
 }
 
+/** 지금부터 다음 날 0시(로컬)까지 남은 밀리초 — '오늘' 을 자정에 다시 읽는 데 쓴다. */
+export function msUntilNextDay(now: Date): number {
+    const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
+    return next.getTime() - now.getTime()
+}
+
 /** { y: 2026, m: 10, d: 21 } → '2026.10.21' */
 export function formatYMD(p: YMD): string {
     return `${p.y}.${pad(p.m)}.${pad(p.d)}`

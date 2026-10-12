@@ -14,6 +14,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@null</item>
+        <!-- 시스템 바 뒤·화면 크기가 바뀌는 순간 보이는 창 바탕도 앱과 같은 아이보리로 -->
+        <item name="android:windowBackground">#F6F2EA</item>
     </style>
 
 

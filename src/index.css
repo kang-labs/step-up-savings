@@ -399,11 +399,10 @@ p {
 
 .stat dd {
     margin: 2px 0 0;
-    overflow: hidden;
     font-size: 15px;
     font-weight: 700;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    /* 금액은 '…' 로 숨기지 않는다 — 칸이 모자라면 줄을 바꿔서라도 모든 자리를 보여 준다 */
+    overflow-wrap: anywhere;
 }
 
 .stat dd small {
@@ -680,7 +679,7 @@ body {
     container-type: inline-size;
 }
 
-@container (max-width: 340px) {
+@container (max-width: 390px) {
     .stats {
         grid-template-columns: 1fr 1fr;
     }
@@ -769,7 +768,8 @@ body {
 
 /* 마우스가 있는 기기에서만 올림 효과 (터치에서 누른 뒤 색이 남는 문제를 막음) */
 @media (hover: hover) {
-    .tab:hover {
+    /* 선택된 탭(검은 바탕)은 제외 — 같은 우선순위라 뒤에 오는 이 규칙이 흰 글자를 덮어 글자가 사라졌다 */
+    .tab:not([aria-selected='true']):hover {
         border-color: #d8d0c2;
         color: var(--ink);
     }

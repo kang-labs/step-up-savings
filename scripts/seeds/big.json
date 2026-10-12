@@ -1,0 +1,6 @@
+{
+    "plans": [
+        { "id": "big", "name": "15억 아파트", "goal": 1500000000, "currentDate": null, "endDate": "2035-12-31", "asset": 300000000, "payday": 25, "stepUp": 200000 }
+    ],
+    "activeId": "big"
+}
