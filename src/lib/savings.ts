@@ -63,3 +63,68 @@ export function groupByYear(paydays: YMD[]): YearMonths[] {
     }
     return rows
 }
+
+export type PlanInput = {
+    goal: number
+    asset: number
+    currentDate: string
+    endDate: string
+    payday: number
+    stepUp: number
+}
+
+export type YearRow = { year: number; months: number; monthly: number; yearTotal: number }
+
+/** ok: false = 첫해 월 저축액이 0원 이하가 될 만큼 연간 증액액이 크다. */
+export type StepUpResult = { ok: true; rows: YearRow[]; total: number } | { ok: false }
+
+export type PlanResult =
+    | { status: 'invalid' }
+    | { status: 'achieved'; diff: number }
+    | { status: 'noMonths'; diff: number }
+    | {
+          status: 'ok'
+          diff: number
+          months: number
+          nextPayday: YMD
+          flatMonthly: number
+          stepUp: StepUpResult
+      }
+
+/**
+ * 첫해(i = 0) 월 x, 다음 해 x + 증액액 … 일 때 Σ 개월수 × 월액 = 차액 이 되는 x 를 구한다.
+ * x = ceil((차액 − 증액액 × Σ i·m_i) / Σ m_i)
+ */
+export function calcStepUp(diff: number, byYear: YearMonths[], stepUp: number): StepUpResult {
+    const months = byYear.reduce((sum, r) => sum + r.months, 0)
+    const weighted = byYear.reduce((sum, r, i) => sum + i * r.months, 0)
+    const first = Math.ceil((diff - stepUp * weighted) / months)
+    if (first <= 0) return { ok: false }
+    const rows = byYear.map((r, i) => {
+        const monthly = first + i * stepUp
+        return { year: r.year, months: r.months, monthly, yearTotal: monthly * r.months }
+    })
+    return { ok: true, rows, total: rows.reduce((sum, r) => sum + r.yearTotal, 0) }
+}
+
+export function calcPlan(input: PlanInput): PlanResult {
+    const current = parseYMD(input.currentDate)
+    const end = parseYMD(input.endDate)
+    const paydayValid = Number.isInteger(input.payday) && input.payday >= 1 && input.payday <= 31
+    if (current === null || end === null || !paydayValid) return { status: 'invalid' }
+
+    const diff = input.goal - input.asset
+    if (diff <= 0) return { status: 'achieved', diff }
+
+    const paydays = listPaydays(current, end, input.payday)
+    if (paydays.length === 0) return { status: 'noMonths', diff }
+
+    return {
+        status: 'ok',
+        diff,
+        months: paydays.length,
+        nextPayday: paydays[0],
+        flatMonthly: Math.ceil(diff / paydays.length),
+        stepUp: calcStepUp(diff, groupByYear(paydays), input.stepUp),
+    }
+}
