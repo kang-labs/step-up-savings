@@ -37,14 +37,16 @@ Tauri 는 exe 크기가 작지만 Rust·VS C++ Build Tools 설치가 필요해 �
 ```
 01.project/
 ├─ electron/main.cjs          Electron 메인 프로세스(창 생성)
+├─ scripts/screenshot.cjs     개발용: 빌드된 화면을 PNG 로 저장(검증용, exe 에 포함 안 됨)
 ├─ src/
 │  ├─ main.tsx · App.tsx
 │  ├─ lib/savings.ts          계산 전용 순수 함수 (React 의존 없음)
-│  ├─ lib/savings.test.ts
 │  ├─ lib/format.ts           숫자·날짜·한글 금액 표기
-│  ├─ lib/format.test.ts
-│  ├─ hooks/usePlans.ts       플랜 목록 상태 + localStorage 저장
-│  ├─ components/             PlanTabs · PlanForm · MoneyInput · SummaryBar · ResultCards · YearlyChart
+│  ├─ lib/plans.ts            플랜 모델 · 추가/수정/삭제 · 저장값 검증 (순수 함수)
+│  ├─ lib/chart.ts            차트 라벨 솎아내기 (순수 함수)
+│  ├─ lib/*.test.ts
+│  ├─ hooks/usePlans.ts       plans.ts 를 React 상태 + localStorage 저장으로 감싼 얇은 훅
+│  ├─ components/             PlanTabs · PlanForm · MoneyInput · DeletePlan · SummaryBar · ResultCards · YearlyChart
 │  └─ index.css
 ├─ index.html · vite.config.ts · tsconfig*.json · package.json
 └─ release/증액저축계산기.exe   (빌드 산출물, git 제외)
@@ -152,6 +154,7 @@ x = ceil( (차액 − 증액액 × Σ i·m_i) / Σ m_i )
 ## 6. 화면
 
 창: 460×820, 최소 400×640, 크기 조절 가능, 메뉴바 없음, 제목 "증액저축 계산기".
+화면 작업 영역이 이보다 낮으면(노트북 150% 배율 등) 높이를 작업 영역에 맞춘다.
 
 위에서 아래로:
 
