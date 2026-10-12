@@ -22,5 +22,17 @@ function createWindow() {
 }
 
 Menu.setApplicationMenu(null)
-app.whenReady().then(createWindow)
-app.on('window-all-closed', () => app.quit())
+
+// 두 번 실행하면 저장소(Local Storage)를 두 프로세스가 나눠 쓰게 되므로, 하나만 띄우고 기존 창을 앞으로 가져온다.
+if (!app.requestSingleInstanceLock()) {
+    app.quit()
+} else {
+    app.on('second-instance', () => {
+        const win = BrowserWindow.getAllWindows()[0]
+        if (win === undefined) return
+        if (win.isMinimized()) win.restore()
+        win.focus()
+    })
+    app.whenReady().then(createWindow)
+    app.on('window-all-closed', () => app.quit())
+}

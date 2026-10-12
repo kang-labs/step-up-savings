@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { MAX_MONEY } from './format.ts'
 import { addPlan, createPlan, initialState, parseState, planLabel, removePlan, selectPlan, updatePlan, type PlansState } from './plans.ts'
 
 function stateOf(ids: string[], activeId = ids[0]): PlansState {
@@ -95,5 +96,33 @@ describe('parseState', () => {
     it('points a dangling activeId at the first plan', () => {
         const raw = JSON.stringify({ plans: [createPlan('a'), createPlan('b')], activeId: 'gone' })
         expect(parseState(raw)?.activeId).toBe('a')
+    })
+})
+
+describe('parseState — 값 범위 (리뷰 M1)', () => {
+    it('keeps only the first of plans that share an id', () => {
+        const raw = JSON.stringify({ plans: [createPlan('a'), { ...createPlan('a'), name: '복제' }], activeId: 'a' })
+        expect(parseState(raw)).toEqual(stateOf(['a']))
+    })
+
+    it('drops plans whose numbers are out of range', () => {
+        const bad = [
+            { ...createPlan('p1'), payday: 1.5 },
+            { ...createPlan('p2'), payday: 0 },
+            { ...createPlan('p3'), payday: 32 },
+            { ...createPlan('p4'), stepUp: -2_000_000 },
+            { ...createPlan('p5'), goal: MAX_MONEY + 1 },
+            { ...createPlan('p6'), asset: 12.5 },
+        ]
+        const raw = JSON.stringify({ plans: [...bad, createPlan('ok')], activeId: 'p1' })
+        expect(parseState(raw)).toEqual(stateOf(['ok']))
+    })
+})
+
+describe('removePlan — 중복 id (리뷰 M1)', () => {
+    it('never empties the plan list, even when ids collide', () => {
+        const state: PlansState = { plans: [createPlan('a'), createPlan('a')], activeId: 'a' }
+        expect(() => removePlan(state, 'a')).not.toThrow()
+        expect(removePlan(state, 'a')).toBe(state)
     })
 })

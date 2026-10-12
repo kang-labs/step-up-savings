@@ -1,5 +1,5 @@
 // 플랜(목표 하나에 대한 입력 묶음) 모델과 상태 전이. React 와 무관한 순수 함수.
-import { koreanUnit } from './format.ts'
+import { MAX_MONEY, koreanUnit } from './format.ts'
 
 export type Plan = {
     id: string
@@ -59,22 +59,31 @@ export function removePlan(state: PlansState, id: string): PlansState {
     const index = state.plans.findIndex(p => p.id === id)
     if (state.plans.length <= 1 || index === -1) return state
     const plans = state.plans.filter(p => p.id !== id)
+    if (plans.length === 0) return state // id 가 겹친 비정상 상태에서도 목록을 비우지 않는다.
     const activeId = state.activeId === id ? plans[Math.min(index, plans.length - 1)].id : state.activeId
     return { plans, activeId }
 }
 
+/** 입력칸에서 만들 수 있는 금액: 0 ~ MAX_MONEY 정수 */
+function isMoney(value: unknown): boolean {
+    return Number.isInteger(value) && (value as number) >= 0 && (value as number) <= MAX_MONEY
+}
+
+// 타입뿐 아니라 화면에서 만들 수 있는 값의 범위까지 확인한다 — 손상된 값이 계산·차트를 망가뜨리지 않게.
 function isPlan(value: unknown): value is Plan {
     if (typeof value !== 'object' || value === null) return false
     const p = value as Record<string, unknown>
     return (
         typeof p.id === 'string' &&
         typeof p.name === 'string' &&
-        typeof p.goal === 'number' &&
+        isMoney(p.goal) &&
         (p.currentDate === null || typeof p.currentDate === 'string') &&
         typeof p.endDate === 'string' &&
-        typeof p.asset === 'number' &&
-        typeof p.payday === 'number' &&
-        typeof p.stepUp === 'number'
+        isMoney(p.asset) &&
+        Number.isInteger(p.payday) &&
+        (p.payday as number) >= 1 &&
+        (p.payday as number) <= 31 &&
+        isMoney(p.stepUp)
     )
 }
 
@@ -90,7 +99,9 @@ export function parseState(raw: string | null): PlansState | null {
     if (typeof data !== 'object' || data === null) return null
     const { plans, activeId } = data as { plans?: unknown; activeId?: unknown }
     if (!Array.isArray(plans)) return null
-    const valid = plans.filter(isPlan)
+    // id 가 겹치면 탭 선택·삭제가 꼬이므로 처음 것만 남긴다.
+    const seen = new Set<string>()
+    const valid = plans.filter(isPlan).filter(p => !seen.has(p.id) && seen.add(p.id))
     if (valid.length === 0) return null
     const active = valid.find(p => p.id === activeId) ?? valid[0]
     return { plans: valid, activeId: active.id }
