@@ -4,7 +4,7 @@
     "description": "증액저축 계산기",
     "author": "Bible Kang",
     "private": true,
-    "version": "0.1.0",
+    "version": "1.0.0",
     "type": "module",
     "main": "electron/main.cjs",
     "scripts": {
@@ -12,6 +12,7 @@
         "test": "vitest run",
         "app": "tsc -b && vite build && electron .",
         "shot": "electron scripts/screenshot.cjs",
+        "android:apk": "tsc -b && vite build && node scripts/android.mjs apk",
         "build": "tsc -b && vite build && electron-builder"
     },
     "build": {
@@ -42,6 +43,9 @@
         }
     },
     "devDependencies": {
+        "@capacitor/android": "^8.5.3",
+        "@capacitor/cli": "^8.5.3",
+        "@capacitor/core": "^8.5.3",
         "@types/node": "^24.19.2",
         "@types/react": "^19.3.0",
         "@types/react-dom": "^19.3.0",

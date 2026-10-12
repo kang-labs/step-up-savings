@@ -3,3 +3,7 @@ dist/
 release/
 *.log
 .shots/
+# 안드로이드 업로드 키 (절대 커밋하지 않음)
+android/keystore.properties
+*.jks
+*.keystore

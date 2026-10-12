@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">증액저축</string>
+    <string name="title_activity_main">증액저축</string>
+    <string name="package_name">kr.biblekang.stepupsavings</string>
+    <string name="custom_url_scheme">kr.biblekang.stepupsavings</string>
+</resources>
