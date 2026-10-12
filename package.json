@@ -12,7 +12,34 @@
         "test": "vitest run",
         "app": "tsc -b && vite build && electron .",
         "shot": "electron scripts/screenshot.cjs",
-        "build": "tsc -b && vite build"
+        "build": "tsc -b && vite build && electron-builder"
+    },
+    "build": {
+        "appId": "kr.bible.stepupsavings",
+        "productName": "증액저축계산기",
+        "directories": {
+            "output": "release"
+        },
+        "files": [
+            "dist/**/*",
+            "electron/**/*"
+        ],
+        "win": {
+            "target": [
+                {
+                    "target": "portable",
+                    "arch": [
+                        "x64"
+                    ]
+                }
+            ]
+        },
+        "portable": {
+            "artifactName": "증액저축계산기.exe"
+        },
+        "electronFuses": {
+            "runAsNode": false
+        }
     },
     "devDependencies": {
         "@types/node": "^24.19.2",
@@ -20,6 +47,7 @@
         "@types/react-dom": "^19.3.0",
         "@vitejs/plugin-react": "^6.1.2",
         "electron": "^44.7.0",
+        "electron-builder": "^26.15.3",
         "pretendard": "^1.3.9",
         "react": "^19.3.0",
         "react-dom": "^19.3.0",
