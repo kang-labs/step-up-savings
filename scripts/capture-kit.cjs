@@ -33,7 +33,8 @@ async function emulate(win, { width, height, scale = 1, mobile = true }) {
     const dbg = win.webContents.debugger
     if (!dbg.isAttached()) dbg.attach('1.3')
     await dbg.sendCommand('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: scale, mobile })
-    await dbg.sendCommand('Emulation.setTouchEmulationEnabled', { enabled: mobile, maxTouchPoints: mobile ? 5 : 0 })
+    // 끌 때는 maxTouchPoints 를 보내지 않는다(0 은 CDP 가 거부: 1~16 만 허용).
+    await dbg.sendCommand('Emulation.setTouchEmulationEnabled', mobile ? { enabled: true, maxTouchPoints: 5 } : { enabled: false })
 }
 
 /**

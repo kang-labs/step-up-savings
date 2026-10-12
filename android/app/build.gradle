@@ -4,6 +4,13 @@ apply plugin: 'com.android.application'
 def appPackage = new groovy.json.JsonSlurper().parse(rootProject.file('../package.json'))
 def (verMajor, verMinor, verPatch) = appPackage.version.tokenize('.').collect { it as int }
 
+// 업로드 키: android/keystore.properties (git 제외) 가 있으면 release 빌드에 서명한다. 만드는 법은 docs/play-store.md
+def keystorePropertiesFile = rootProject.file('keystore.properties')
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withInputStream { keystoreProperties.load(it) }
+}
+
 android {
     namespace = "kr.biblekang.stepupsavings"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -20,8 +27,19 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
     buildTypes {
         release {
+            signingConfig keystorePropertiesFile.exists() ? signingConfigs.release : null
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

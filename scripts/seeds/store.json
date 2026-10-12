@@ -1,0 +1,8 @@
+{
+    "plans": [
+        { "id": "home", "name": "내 집 마련", "goal": 100000000, "currentDate": null, "endDate": "2029-12-31", "asset": 30000000, "payday": 25, "stepUp": 100000 },
+        { "id": "emergency", "name": "비상금", "goal": 10000000, "currentDate": null, "endDate": "2027-12-31", "asset": 2500000, "payday": 25, "stepUp": 50000 },
+        { "id": "travel", "name": "가족 여행", "goal": 5000000, "currentDate": null, "endDate": "2027-08-31", "asset": 1200000, "payday": 25, "stepUp": 0 }
+    ],
+    "activeId": "home"
+}

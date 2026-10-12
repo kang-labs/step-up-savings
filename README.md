@@ -17,6 +17,21 @@ npm run build   # release/증액저축계산기.exe 갱신 (실행 중인 exe �
 npm run shot -- .shots/out.png [seed.json]   # 빌드된 화면을 PNG 로 저장
 ```
 
+## 안드로이드 앱
+
+같은 화면을 Capacitor 로 감싼 안드로이드 앱(패키지 `kr.biblekang.stepupsavings`, 홈 화면 이름 "증액저축")도 만들 수 있습니다. JDK 21 과 Android SDK 36 이 필요합니다(환경변수 `JAVA_HOME`, `ANDROID_HOME`).
+
+```bash
+npm run android:apk            # 테스트용 release/증액저축-debug.apk
+npm run android:release        # Play 업로드용 release/증액저축.aab + 직접 전달용 release/증액저축.apk (업로드 키 필요)
+npm run icons                  # assets/icon.svg 로 모든 아이콘 다시 만들기
+npm run store                  # Play 등록 이미지(store/) 다시 만들기
+npm run shot -- --device all   # 휴대폰·폴드 11가지 화면 자동 검사
+```
+
+- 휴대폰에 설치: apk 파일을 휴대폰으로 옮겨 열고 "출처를 알 수 없는 앱 설치"를 허용합니다.
+- Google Play 등록·출시 후 관리: `docs/play-store.md`
+
 ## 계산 규칙
 
 - **남은 개월 수**: `현재날짜 < 그 달 월급날 ≤ 완료날짜` 인 달의 수. 월급날 전이면 이번 달 포함, 월급날 당일부터는 제외. 완료일이 그 달 월급날보다 이르면 마지막 달도 제외. 31일처럼 없는 날은 그 달 말일.
