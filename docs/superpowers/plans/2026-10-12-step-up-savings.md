@@ -10,7 +10,7 @@
 
 **Spec:** `docs/superpowers/specs/2026-10-12-step-up-savings-design.md`
 
-**Project root:** `C:\Users\PIX-BIBLE\Desktop\bible\찡\01.project` — 모든 경로와 명령은 이 폴더 기준이다.
+**Project root:** `C:\Users\PIX-BIBLE\Desktop\bible\찡\01.project\step-up-savings` — 모든 경로와 명령은 이 폴더 기준이다.
 
 ## Global Constraints
 

@@ -35,7 +35,7 @@ Tauri 는 exe 크기가 작지만 Rust·VS C++ Build Tools 설치가 필요해 �
 ## 3. 폴더 구조
 
 ```
-step-up-savings/      (C:SERSPIX-BIBLEDESKTOPBIBLḚ�01.PROJECT/1.PROJECTSTEP-UP-SAVINGS)
+01.project/step-up-savings/
 ├─ electron/main.cjs          Electron 메인 프로세스(창 생성)
 ├─ scripts/screenshot.cjs     개발용: 빌드된 화면을 PNG 로 저장(검증용, exe 에 포함 안 됨)
 ├─ src/
