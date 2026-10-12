@@ -1,12 +1,17 @@
 import { DeletePlan } from './components/DeletePlan.tsx'
 import { PlanForm } from './components/PlanForm.tsx'
 import { PlanTabs } from './components/PlanTabs.tsx'
+import { ResultCards } from './components/ResultCards.tsx'
+import { SummaryBar } from './components/SummaryBar.tsx'
+import { YearlyChart } from './components/YearlyChart.tsx'
 import { usePlans } from './hooks/usePlans.ts'
 import { todayISO } from './lib/format.ts'
+import { calcPlan } from './lib/savings.ts'
 
 export default function App() {
     const { plans, active, select, add, update, remove } = usePlans()
     const today = todayISO()
+    const result = calcPlan({ ...active, currentDate: active.currentDate ?? today })
 
     return (
         <div className="app">
@@ -20,6 +25,9 @@ export default function App() {
             {/* key: 탭을 바꾸면 입력 커서·삭제 확인 같은 화면 상태를 초기화한다. */}
             <main className="app-main" key={active.id}>
                 <PlanForm plan={active} today={today} onChange={patch => update(active.id, patch)} />
+                <SummaryBar plan={active} result={result} />
+                <ResultCards result={result} stepUp={active.stepUp} />
+                {result.status === 'ok' && result.stepUp.ok && <YearlyChart rows={result.stepUp.rows} flatMonthly={result.flatMonthly} />}
                 <DeletePlan disabled={plans.length <= 1} onDelete={() => remove(active.id)} />
             </main>
         </div>
