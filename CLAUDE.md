@@ -70,7 +70,7 @@ npm run shot -- .shots/out.png [seed.json]  # PC 창(460×820) 스크린샷
 
 **개발용 캡처 도구**(Electron 메인 프로세스, exe 에 미포함): `scripts/capture-kit.cjs` 의 `emulate()` 는 창에 첫 페이지를 띄운 **뒤에** CDP 디버거를 붙인다(먼저 붙이면 멈춤). 캡처는 `capturePage()` — 숨은 창에서 CDP 스크린샷은 스크롤 뒤 멈춘다. 결과 픽셀은 뷰포트 × 프로세스 화면 배율이라, `store-assets.cjs` 는 `force-device-scale-factor` 를 고정한 프로세스를 배율별로 따로 띄운다.
 
-**배포(GitHub Releases)**: `v*` 태그를 push 하면 `.github/workflows/release.yml` 이 태그 = `package.json` version 확인·타입 검사·테스트 후 exe(windows-latest)와 apk(ubuntu-latest)를 만들어 Release 에 올린다. 첨부 파일 이름은 영문(`StepUpSavings-v1.2.3-windows.exe` 등) — GitHub 이 한글을 지운다. Secrets `ANDROID_KEYSTORE_BASE64` 등이 있으면 서명 apk, 없으면 debug apk. 리눅스에서 돌리므로 `android/gradlew` 는 실행 권한(100755)을 유지한다.
+**배포(GitHub Releases)**: `v*` 태그를 push 하면 `.github/workflows/release.yml` 이 태그 = `package.json` version 확인·타입 검사·테스트 후 exe(windows-latest)와 apk(ubuntu-latest)를 만들어 Release 에 올린다. 첨부 파일 이름은 영문(`step-up-savings-v1.2.3-windows.exe`, `step-up-savings-v1.2.3.apk`, 서명 없으면 `…-test.apk`) — GitHub 이 한글을 지운다. Secrets `ANDROID_KEYSTORE_BASE64` 등이 있으면 서명 apk, 없으면 debug apk. 리눅스에서 돌리므로 `android/gradlew` 는 실행 권한(100755)을 유지한다.
 
 ## 문서
 

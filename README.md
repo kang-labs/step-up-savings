@@ -6,8 +6,8 @@
 
 [최신 버전 내려받기 (Releases)](../../releases/latest) 페이지 아래쪽 **Assets** 에서 파일을 고릅니다.
 
-- **PC(Windows)**: `StepUpSavings-…-windows.exe` 를 더블클릭하면 설치 없이 바로 열립니다(실행할 때마다 압축을 풀어서 뜨기까지 몇 초 걸릴 수 있습니다). "Windows의 PC 보호" 창이 뜨면 **추가 정보 → 실행**. 입력한 플랜은 `%APPDATA%\증액저축계산기` 에 저장되어 다시 열어도 남아 있습니다.
-- **안드로이드**: `StepUpSavings-…-android.apk` 를 휴대폰에서 내려받아 열고 "출처를 알 수 없는 앱 설치"를 허용합니다.
+- **PC(Windows)**: `step-up-savings-…-windows.exe` 를 더블클릭하면 설치 없이 바로 열립니다(실행할 때마다 압축을 풀어서 뜨기까지 몇 초 걸릴 수 있습니다). "Windows의 PC 보호" 창이 뜨면 **추가 정보 → 실행**. 입력한 플랜은 `%APPDATA%\증액저축계산기` 에 저장되어 다시 열어도 남아 있습니다.
+- **안드로이드**: `step-up-savings-….apk` 를 휴대폰에서 내려받아 열고 "출처를 알 수 없는 앱 설치"를 허용합니다.
 
 ## 개발
 
@@ -49,7 +49,7 @@ git push --follow-tags # 코드와 태그를 함께 올리면 자동 빌드 시�
 
 ### 안드로이드 서명 (선택)
 
-업로드 키를 아래 **Secrets** 에 넣어 두면 서명된 `…-android.apk` 가 올라갑니다. 없으면 `…-android-test.apk`(테스트용)가 올라가는데, 빌드할 때마다 서명이 달라 **이전 버전 위에 덮어 설치되지 않습니다**(지우고 다시 설치하면 저장된 플랜이 사라짐). 남에게 나눠 줄 거라면 키를 넣어 두세요.
+업로드 키를 아래 **Secrets** 에 넣어 두면 서명된 `step-up-savings-v1.2.3.apk` 가 올라갑니다. 없으면 `step-up-savings-v1.2.3-test.apk`(테스트용)가 올라가는데, 빌드할 때마다 서명이 달라 **이전 버전 위에 덮어 설치되지 않습니다**(지우고 다시 설치하면 저장된 플랜이 사라짐). 남에게 나눠 줄 거라면 키를 넣어 두세요.
 
 저장소 **Settings → Secrets and variables → Actions → New repository secret** 에 4개를 추가합니다. 키 만드는 법은 `docs/play-store.md` 3장.
 
