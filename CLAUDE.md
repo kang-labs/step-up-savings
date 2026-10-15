@@ -75,4 +75,5 @@ npm run shot -- .shots/out.png [seed.json]  # PC 창(460×820) 스크린샷
 ## 문서
 
 - 설계 스펙: `docs/superpowers/specs/` (PC 버전 / 안드로이드 버전), 구현 계획: `docs/superpowers/plans/`
+- README 는 앱을 내려받는 사람용, 개발·빌드·배포 방법은 `docs/development.md`
 - Google Play 등록·출시 후 관리 가이드: `docs/play-store.md`, 개인정보처리방침 문안: `docs/privacy-policy.md`
