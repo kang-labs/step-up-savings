@@ -1,6 +1,7 @@
 import { useId } from 'react'
 import { planLabel, type Plan, type PlanPatch } from '../lib/plans.ts'
 import { MoneyInput } from './MoneyInput.tsx'
+import { ReturnInput } from './ReturnInput.tsx'
 
 type Props = { plan: Plan; today: string; onChange: (patch: PlanPatch) => void }
 
@@ -76,6 +77,7 @@ export function PlanForm({ plan, today, onChange }: Props) {
                 </div>
 
                 <MoneyInput label="연간 증액액" value={plan.stepUp} onChange={stepUp => onChange({ stepUp })} />
+                <ReturnInput on={plan.returnOn} bp={plan.returnBp} onChange={onChange} />
             </div>
         </section>
     )

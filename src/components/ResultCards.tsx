@@ -1,17 +1,31 @@
-import { formatWon } from '../lib/format.ts'
+import { formatPercent, formatWon, koreanUnit } from '../lib/format.ts'
 import type { PlanResult, YearRow } from '../lib/savings.ts'
 
-type Props = { result: PlanResult; stepUp: number }
+/** returnBp: 계산에 쓴 연수익률(꺼져 있으면 0). 0 보다 크면 넣는 돈과 예상 수익을 나눠 보여 준다. */
+type Props = { result: PlanResult; stepUp: number; returnBp: number }
 
-const NOTICES: Record<Exclude<PlanResult['status'], 'ok'>, { icon: string; title: string; body: string }> = {
-    invalid: { icon: '📅', title: '날짜를 확인해주세요', body: '현재날짜와 완료날짜를 모두 입력해야 계산할 수 있어요.' },
-    achieved: { icon: '🎉', title: '이미 목표를 달성했어요', body: '현재자산이 목표금액 이상이에요.' },
-    noMonths: { icon: '⏳', title: '남은 월급날이 없어요', body: '완료날짜까지 받을 월급이 없어요. 완료날짜를 늦춰보세요.' },
+type Notice = { icon: string; title: string; body: string }
+
+function noticeOf(result: Exclude<PlanResult, { status: 'ok' }>, returnBp: number): Notice {
+    switch (result.status) {
+        case 'invalid':
+            return { icon: '📅', title: '날짜를 확인해주세요', body: '현재날짜와 완료날짜를 모두 입력해야 계산할 수 있어요.' }
+        case 'achieved':
+            return { icon: '🎉', title: '이미 목표를 달성했어요', body: '현재자산이 목표금액 이상이에요.' }
+        case 'noMonths':
+            return { icon: '⏳', title: '남은 월급날이 없어요', body: '완료날짜까지 받을 월급이 없어요. 완료날짜를 늦춰보세요.' }
+        case 'grown':
+            return {
+                icon: '📈',
+                title: '지금 자산만 굴려도 목표에 닿아요',
+                body: `연 ${formatPercent(returnBp)}% 수익이면 완료날짜에 약 ${koreanUnit(result.finalAsset)} 원이 돼요.`,
+            }
+    }
 }
 
-export function ResultCards({ result, stepUp }: Props) {
+export function ResultCards({ result, stepUp, returnBp }: Props) {
     if (result.status !== 'ok') {
-        const notice = NOTICES[result.status]
+        const notice = noticeOf(result, returnBp)
         return (
             <section className="card notice" role="status">
                 <span className="notice-icon" aria-hidden="true">
@@ -25,26 +39,35 @@ export function ResultCards({ result, stepUp }: Props) {
         )
     }
 
+    const withReturn = returnBp > 0
+    const returnBadge = withReturn && <span className="badge result-badge">연 {formatPercent(returnBp)}% 수익</span>
+    const flatDeposit = result.flatMonthly * result.months
+
     return (
         <>
             <section className="card result" aria-label="균등 저축">
                 <p className="result-kicker">
                     <span className="step-no">1</span>매달 같은 금액으로
+                    {returnBadge}
                 </p>
                 <p className="result-amount">
                     {formatWon(result.flatMonthly)}
                     <span className="unit">원</span>
                 </p>
                 <p className="result-sub">
-                    {result.months}개월 동안 매달 · 총 {formatWon(result.flatMonthly * result.months)}원
+                    {result.months}개월 동안 매달 ·{' '}
+                    {withReturn
+                        ? `넣는 돈 ${formatWon(flatDeposit)}원 · 예상 수익 ${formatWon(result.flatProfit)}원`
+                        : `총 ${formatWon(flatDeposit)}원`}
                 </p>
             </section>
             <section className="card result result-step" aria-label="증액 저축">
                 <p className="result-kicker">
                     <span className="step-no">2</span>매년 {formatWon(stepUp)}원씩 늘려서
+                    {returnBadge}
                 </p>
                 {result.stepUp.ok ? (
-                    <StepUpTable rows={result.stepUp.rows} total={result.stepUp.total} />
+                    <StepUpTable rows={result.stepUp.rows} total={result.stepUp.total} profit={withReturn ? result.stepUp.profit : null} />
                 ) : (
                     <p className="inline-notice">연간 증액액이 너무 커서 첫해 월 저축액이 0원 이하가 돼요. 증액액을 줄여보세요.</p>
                 )}
@@ -53,7 +76,8 @@ export function ResultCards({ result, stepUp }: Props) {
     )
 }
 
-function StepUpTable({ rows, total }: { rows: YearRow[]; total: number }) {
+/** profit: 예상 수익. null 이면 수익 없이 계산한 것이라 '총 저축액' 한 줄만. */
+function StepUpTable({ rows, total, profit }: { rows: YearRow[]; total: number; profit: number | null }) {
     return (
         <>
             <p className="result-amount">
@@ -86,10 +110,23 @@ function StepUpTable({ rows, total }: { rows: YearRow[]; total: number }) {
                         ))}
                     </tbody>
                     <tfoot>
-                        <tr>
-                            <td colSpan={3}>총 저축액</td>
-                            <td>{formatWon(total)}</td>
-                        </tr>
+                        {profit === null ? (
+                            <tr>
+                                <td colSpan={3}>총 저축액</td>
+                                <td>{formatWon(total)}</td>
+                            </tr>
+                        ) : (
+                            <>
+                                <tr>
+                                    <td colSpan={3}>넣는 돈 합계</td>
+                                    <td>{formatWon(total)}</td>
+                                </tr>
+                                <tr>
+                                    <td colSpan={3}>예상 수익</td>
+                                    <td>{formatWon(profit)}</td>
+                                </tr>
+                            </>
+                        )}
                     </tfoot>
                 </table>
             </div>

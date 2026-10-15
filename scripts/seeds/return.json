@@ -1,0 +1,8 @@
+{
+    "plans": [
+        { "id": "r1", "name": "연수익 최대", "goal": 999999999999, "currentDate": null, "endDate": "2045-12-31", "asset": 1234567, "payday": 31, "stepUp": 9999999, "returnOn": true, "returnBp": 2999 },
+        { "id": "r2", "name": "자산만으로 달성", "goal": 100000000, "currentDate": null, "endDate": "2035-12-31", "asset": 90000000, "payday": 25, "stepUp": 100000, "returnOn": true, "returnBp": 500 },
+        { "id": "r3", "name": "연 3.25%", "goal": 100000000, "currentDate": null, "endDate": "2029-12-31", "asset": 30000000, "payday": 25, "stepUp": 100000, "returnOn": true, "returnBp": 325 }
+    ],
+    "activeId": "r1"
+}

@@ -17,6 +17,8 @@ describe('createPlan / initialState', () => {
             asset: 0,
             payday: 21,
             stepUp: 100_000,
+            returnOn: false,
+            returnBp: 0,
         })
     })
 
@@ -113,9 +115,26 @@ describe('parseState — 값 범위 (리뷰 M1)', () => {
             { ...createPlan('p4'), stepUp: -2_000_000 },
             { ...createPlan('p5'), goal: MAX_MONEY + 1 },
             { ...createPlan('p6'), asset: 12.5 },
+            { ...createPlan('p7'), returnOn: 'yes' },
+            { ...createPlan('p8'), returnBp: 3001 },
+            { ...createPlan('p9'), returnBp: 3.5 },
+            { ...createPlan('p10'), returnBp: -1 },
         ]
         const raw = JSON.stringify({ plans: [...bad, createPlan('ok')], activeId: 'p1' })
         expect(parseState(raw)).toEqual(stateOf(['ok']))
+    })
+})
+
+describe('parseState — 연수익 추가 전 저장값', () => {
+    it('reads plans saved before the return fields existed, with return off', () => {
+        const { returnOn: _on, returnBp: _bp, ...old } = { ...createPlan('a'), name: '내 집' }
+        const restored = parseState(JSON.stringify({ plans: [old], activeId: 'a' }))
+        expect(restored).toEqual({ plans: [{ ...createPlan('a'), name: '내 집' }], activeId: 'a' })
+    })
+
+    it('keeps a saved return setting', () => {
+        const plan = { ...createPlan('a'), returnOn: true, returnBp: 325 }
+        expect(parseState(JSON.stringify({ plans: [plan], activeId: 'a' }))?.plans[0]).toEqual(plan)
     })
 })
 

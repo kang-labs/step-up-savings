@@ -12,7 +12,9 @@ import { calcPlan } from './lib/savings.ts'
 export default function App() {
     const { plans, active, select, add, update, remove } = usePlans()
     const today = useToday()
-    const result = calcPlan({ ...active, currentDate: active.currentDate ?? today })
+    // 연수익 체크를 끄면 수익률은 기억만 하고 계산에는 0 을 쓴다.
+    const returnBp = active.returnOn ? active.returnBp : 0
+    const result = calcPlan({ ...active, currentDate: active.currentDate ?? today, returnBp })
 
     return (
         <div className="app">
@@ -32,7 +34,7 @@ export default function App() {
                     <DeletePlan disabled={plans.length <= 1} onDelete={() => remove(active.id)} />
                 </div>
                 <div className="col col-result">
-                    <ResultCards result={result} stepUp={active.stepUp} />
+                    <ResultCards result={result} stepUp={active.stepUp} returnBp={returnBp} />
                     {result.status === 'ok' && result.stepUp.ok && <YearlyChart rows={result.stepUp.rows} flatMonthly={result.flatMonthly} />}
                 </div>
             </main>

@@ -39,7 +39,7 @@ npm run shot -- --device all                # 휴대폰·폴드 화면 자동 �
 npm run shot -- .shots/out.png [seed.json]  # PC 창(460×820) 스크린샷
 ```
 
-화면(CSS·컴포넌트)을 바꾼 뒤에는 `npx vite build` 후 `npm run shot -- --device all` 을 돌린다. 기기 11종 × 데이터 3가지(기본·`scripts/seeds/stress.json`·`big.json`)의 열 개수, 헤더 고정, 가로 넘침, 안전 영역 여백, `…` 잘림을 검사하고, 폴드를 켠 채로 펼치기와 PC 탭 마우스 올림도 검사한다. 스크린샷은 `.shots/devices/`(git 제외)에 남는다.
+화면(CSS·컴포넌트)을 바꾼 뒤에는 `npx vite build` 후 `npm run shot -- --device all` 을 돌린다. 기기 11종 × 데이터 4가지(기본·`scripts/seeds/stress.json`·`big.json`·`return.json`(연수익 켬))의 열 개수, 헤더 고정, 가로 넘침, 안전 영역 여백, `…` 잘림을 검사하고, 폴드를 켠 채로 펼치기와 PC 탭 마우스 올림도 검사한다. 스크린샷은 `.shots/devices/`(git 제외)에 남는다.
 
 ## Claude Code 셸에서 주의할 환경
 
@@ -53,7 +53,7 @@ npm run shot -- .shots/out.png [seed.json]  # PC 창(460×820) 스크린샷
 
 **계산·상태는 React 와 무관한 순수 함수**(`src/lib/`)이고 모두 단위 테스트가 있다. 컴포넌트는 이 함수들을 화면에 연결만 한다.
 
-- `savings.ts` — 남은 개월 수 = `현재날짜 < 그 달 월급날 ≤ 완료날짜` 인 월급날 수(그 달에 없는 날은 말일). 균등 = `ceil(차액 / 개월)`. 증액 = 월급날이 있는 첫 연도를 첫해로 `x = ceil((차액 − 증액액 × Σ i·m_i) / Σ m_i)`, i 번째 해는 `x + i × 증액액`. 상태는 `invalid / achieved / noMonths / ok`(+ `stepUp.ok=false` 는 증액액이 너무 큼).
+- `savings.ts` — 남은 개월 수 = `현재날짜 < 그 달 월급날 ≤ 완료날짜` 인 월급날 수(그 달에 없는 날은 말일). 균등 = `ceil(차액 / 개월)`. 증액 = 월급날이 있는 첫 연도를 첫해로 `x = ceil((차액 − 증액액 × Σ i·m_i) / Σ m_i)`, i 번째 해는 `x + i × 증액액`. 상태는 `invalid / achieved / noMonths / grown / ok`(+ `stepUp.ok=false` 는 증액액이 너무 큼). 연수익(`returnBp` = % × 100 정수)은 적금식 — 그해 시작 금액 × (1 + r·m/12), j 번째 납입 × (1 + r·(m−j)/12), 연말에 합쳐 복리. `growthFactors` 가 해마다 '1원의 완료날짜 가치'(perYear)를 만들어 위 공식의 개월 수 자리에 넣는다 — r = 0 이면 perYear = 개월 수라 기존 결과와 같다. `grown` = 현재자산만 불려도 목표 이상. 설계: `docs/superpowers/specs/2026-10-15-annual-return-design.md`.
 - `plans.ts` — 플랜 모델과 추가·수정·삭제 전이, 저장값 검증(`parseState`: 타입·범위·중복 id 걸러 냄). `hooks/usePlans.ts` 가 localStorage 키 `step-up-savings/v1` 로 저장한다. `currentDate: null` 은 "항상 오늘".
 - `hooks/useToday.ts` — 앱이 다시 보이거나 자정이 지나면 오늘 날짜를 새로 읽는다(휴대폰은 백그라운드에서 다시 열리므로).
 - `format.ts`(콤마·한글 단위·커서 위치), `chart.ts`(막대가 많을 때 라벨 솎아내기·점선과 겹치는 라벨 위치), `wheel.ts`(탭 줄 세로 휠 → 가로 스크롤).

@@ -75,5 +75,5 @@
 - `savings.test.ts`: 1년 예시 2,277,500원 / r = 0 이면 기존과 같은 결과 / 수익 반영 월액이 최소 금액(그 월액으로는 도달, 1원 적으면 미달) / 첫해가 몇 달뿐인 경우 / `grown` / 예상 수익 계산.
 - `plans.test.ts`: 기본값, 예전 데이터(필드 없음) 읽기, 잘못된 `returnOn`·`returnBp` 걸러내기.
 - `format.test.ts`: 입력 거르기, `returnBp` 변환, 화면 표기(5, 3.5, 4.25).
-- 화면: `npx vite build` 후 `npm run shot -- --device all`.
+- 화면: `npx vite build` 후 `npm run shot -- --device all` — 검사 데이터에 연수익을 켠 `scripts/seeds/return.json` 추가.
 - README 유의사항 문구 수정.

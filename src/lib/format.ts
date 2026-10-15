@@ -7,6 +7,30 @@ export const MAX_MONEY = 999_999_999_999
 const wonFormat = new Intl.NumberFormat('ko-KR')
 const compactFormat = new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 1 })
 
+/** 연수익률 상한 30% (× 100 정수) */
+export const MAX_RETURN_BP = 3_000
+
+/**
+ * 수익률 입력칸 글자 거르기: 숫자와 소수점 하나만, 소수 둘째 자리까지, 30 이하.
+ * 받아들일 수 없는 입력이면 null (입력칸은 이전 글자를 유지한다).
+ */
+export function cleanPercentInput(text: string): string | null {
+    const cleaned = text.replace(/[^\d.]/g, '').replace(/^0+(?=\d)/, '')
+    if (!/^\d*(\.\d{0,2})?$/.test(cleaned)) return null
+    return percentToBp(cleaned) > MAX_RETURN_BP ? null : cleaned
+}
+
+/** '3.25' → 325. 빈 값이나 '.' 은 0. */
+export function percentToBp(text: string): number {
+    const value = Number(text)
+    return text === '' || text === '.' || Number.isNaN(value) ? 0 : Math.round(value * 100)
+}
+
+/** 325 → '3.25', 350 → '3.5', 500 → '5' */
+export function formatPercent(bp: number): string {
+    return String(bp / 100)
+}
+
 /** 72495091 → '72,495,091' */
 export function formatWon(n: number): string {
     return wonFormat.format(n)

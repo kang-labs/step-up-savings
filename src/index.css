@@ -298,6 +298,27 @@ p {
     font-weight: 700;
 }
 
+/* 연수익 체크박스 — 라벨 전체를 눌러도 켜지고 꺼진다 */
+.check-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.check-label input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+/* 연수익이 꺼져 있을 때 수익률 칸 */
+.field-control.is-disabled {
+    opacity: 0.5;
+}
+
 .link-btn {
     padding: 0;
     border: 0;
@@ -420,6 +441,11 @@ p {
     font-size: 13px;
     font-weight: 600;
     color: var(--ink-2);
+}
+
+/* '연 5% 수익' 배지는 제목 줄 오른쪽 끝에 */
+.result-badge {
+    margin-left: auto;
 }
 
 .step-no {
@@ -763,6 +789,16 @@ body {
     .link-btn {
         margin: -6px -4px;
         padding: 6px 4px;
+    }
+
+    .check-label {
+        margin: -8px -6px;
+        padding: 8px 6px;
+    }
+
+    .check-label input {
+        width: 20px;
+        height: 20px;
     }
 }
 

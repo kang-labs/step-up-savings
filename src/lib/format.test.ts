@@ -1,5 +1,20 @@
 import { describe, expect, it } from 'vitest'
-import { MAX_MONEY, caretAfterDigits, compactWon, formatWon, formatYMD, koreanUnit, moneyHint, msUntilNextDay, parseMoney, todayISO } from './format.ts'
+import {
+    MAX_MONEY,
+    MAX_RETURN_BP,
+    caretAfterDigits,
+    cleanPercentInput,
+    compactWon,
+    formatPercent,
+    formatWon,
+    formatYMD,
+    koreanUnit,
+    moneyHint,
+    msUntilNextDay,
+    parseMoney,
+    percentToBp,
+    todayISO,
+} from './format.ts'
 
 describe('formatWon', () => {
     it('adds thousands separators', () => {
@@ -84,5 +99,46 @@ describe('caretAfterDigits', () => {
     it('falls back to the end when there are fewer digits', () => {
         expect(caretAfterDigits('1,234', 9)).toBe(5)
         expect(caretAfterDigits('', 3)).toBe(0)
+    })
+})
+
+describe('cleanPercentInput', () => {
+    it('keeps digits and one decimal point, so typing 3. stays as 3.', () => {
+        expect(cleanPercentInput('3.')).toBe('3.')
+        expect(cleanPercentInput('4.25')).toBe('4.25')
+        expect(cleanPercentInput('.5')).toBe('.5')
+        expect(cleanPercentInput('')).toBe('')
+    })
+
+    it('drops other characters and leading zeros', () => {
+        expect(cleanPercentInput('5%')).toBe('5')
+        expect(cleanPercentInput('연 3.5 %')).toBe('3.5')
+        expect(cleanPercentInput('05')).toBe('5')
+        expect(cleanPercentInput('0.5')).toBe('0.5')
+    })
+
+    it('rejects a second point, a third decimal or more than 30', () => {
+        expect(cleanPercentInput('3.5.')).toBeNull()
+        expect(cleanPercentInput('3.255')).toBeNull()
+        expect(cleanPercentInput('30.01')).toBeNull()
+        expect(cleanPercentInput('300')).toBeNull()
+        expect(cleanPercentInput('30')).toBe('30')
+    })
+})
+
+describe('percentToBp / formatPercent', () => {
+    it('stores a percent as a whole number of hundredths', () => {
+        expect(percentToBp('3.25')).toBe(325)
+        expect(percentToBp('4.1')).toBe(410)
+        expect(percentToBp('30')).toBe(MAX_RETURN_BP)
+        expect(percentToBp('')).toBe(0)
+        expect(percentToBp('.')).toBe(0)
+    })
+
+    it('shows it back without trailing zeros', () => {
+        expect(formatPercent(500)).toBe('5')
+        expect(formatPercent(350)).toBe('3.5')
+        expect(formatPercent(425)).toBe('4.25')
+        expect(formatPercent(1)).toBe('0.01')
     })
 })

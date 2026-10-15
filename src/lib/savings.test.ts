@@ -180,3 +180,79 @@ describe('calcPlan — 규칙과 경계', () => {
         expect(calcPlan({ ...base, payday: 32 })).toEqual({ status: 'invalid' })
     })
 })
+
+/** 적금식 규칙대로 한 달씩 넣어 본 완료날짜 금액 — 공식과 따로 만든 검산용. */
+function simulate(input: PlanInput, first: number): number {
+    const r = (input.returnBp ?? 0) / 10_000
+    const byYear = groupByYear(listPaydays(ymd(input.currentDate), ymd(input.endDate), input.payday))
+    let balance = input.asset
+    byYear.forEach((year, i) => {
+        const monthly = first + i * input.stepUp
+        let next = balance * (1 + (r * year.months) / 12)
+        for (let j = 1; j <= year.months; j++) next += monthly * (1 + (r * (year.months - j)) / 12)
+        balance = next
+    })
+    return balance
+}
+
+describe('calcPlan — 연수익 (적금식 복리)', () => {
+    const example = { ...base, currentDate: '2026-10-12', endDate: '2029-12-31', payday: 25, asset: 30_000_000 }
+
+    it('grows the balance by the remaining months within a year: 100만 + 10만 × 12, 5% → 2,277,500', () => {
+        const input = { ...base, currentDate: '2026-12-31', endDate: '2027-12-31', asset: 1_000_000, goal: 2_277_500, stepUp: 0, returnBp: 500 }
+        const r = okResult(calcPlan(input))
+        expect(r.months).toBe(12)
+        expect(r.flatMonthly).toBe(100_000)
+        expect(r.flatProfit).toBe(77_500)
+    })
+
+    it('matches the no-return result exactly at 0%', () => {
+        for (const input of [base, { ...base, currentDate: '2026-04-21', asset: 33_652_620, stepUp: 130_000 }, { ...base, goal: 1_000_000, stepUp: 1_000_000 }]) {
+            const withZero = calcPlan({ ...input, returnBp: 0 })
+            expect(withZero).toEqual(calcPlan(input))
+            expect(okResult(withZero).flatProfit).toBe(0)
+        }
+    })
+
+    it('gives the smallest monthly amount that reaches the goal (1억 예시, 5%)', () => {
+        const input = { ...example, returnBp: 500 }
+        const r = okResult(calcPlan(input))
+        if (!r.stepUp.ok) throw new Error('expected a step-up schedule')
+        expect(r.flatMonthly).toBe(1_536_998)
+        expect(r.flatProfit).toBe(10_057_095)
+        expect(stepRows(r)).toEqual([
+            [2026, 3, 1_356_515],
+            [2027, 12, 1_456_515],
+            [2028, 12, 1_556_515],
+            [2029, 12, 1_656_515],
+        ])
+        expect(r.stepUp.total).toBe(60_104_085)
+        expect(r.stepUp.profit).toBe(9_895_955)
+    })
+
+    it('agrees with a month-by-month simulation: the amount reaches the goal, one won less does not', () => {
+        const cases: PlanInput[] = [
+            { ...example, returnBp: 500 },
+            { ...base, currentDate: '2026-04-21', asset: 33_652_620, stepUp: 130_000, returnBp: 325 },
+            { ...base, currentDate: '2025-11-13', asset: 26_117_974, returnBp: 1 },
+            { ...base, goal: 987_654_321, asset: 1_234_567, endDate: '2041-06-10', payday: 31, returnBp: 3000 },
+        ]
+        for (const input of cases) {
+            const r = okResult(calcPlan(input))
+            if (!r.stepUp.ok) throw new Error('expected a step-up schedule')
+            const flat = { ...input, stepUp: 0 }
+            expect(simulate(flat, r.flatMonthly)).toBeGreaterThanOrEqual(input.goal)
+            expect(simulate(flat, r.flatMonthly - 1)).toBeLessThan(input.goal)
+            expect(simulate(input, r.stepUp.rows[0].monthly)).toBeGreaterThanOrEqual(input.goal)
+            expect(simulate(input, r.stepUp.rows[0].monthly - 1)).toBeLessThan(input.goal)
+        }
+        expect(okResult(calcPlan(cases[1])).flatMonthly).toBe(1_333_085)
+        expect(stepRows(calcPlan(cases[1]))[0][2]).toBe(1_124_896)
+    })
+
+    it('reports a goal the current assets reach on their own', () => {
+        const r = calcPlan({ ...example, asset: 95_000_000, returnBp: 500 })
+        expect(r).toEqual({ status: 'grown', diff: 5_000_000, months: 39, nextPayday: { y: 2026, m: 10, d: 25 }, finalAsset: 111_349_054 })
+        expect(calcPlan({ ...example, asset: 95_000_000, returnBp: 0 }).status).toBe('ok')
+    })
+})

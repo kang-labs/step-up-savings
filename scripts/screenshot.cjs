@@ -35,6 +35,7 @@ const SEEDS = {
     기본: null,
     극단: path.join(__dirname, 'seeds', 'stress.json'),
     '10억대': path.join(__dirname, 'seeds', 'big.json'),
+    연수익: path.join(__dirname, 'seeds', 'return.json'),
 }
 
 function parseArgs(argv) {

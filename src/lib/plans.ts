@@ -1,5 +1,5 @@
 // 플랜(목표 하나에 대한 입력 묶음) 모델과 상태 전이. React 와 무관한 순수 함수.
-import { MAX_MONEY, koreanUnit } from './format.ts'
+import { MAX_MONEY, MAX_RETURN_BP, koreanUnit } from './format.ts'
 
 export type Plan = {
     id: string
@@ -12,6 +12,10 @@ export type Plan = {
     asset: number
     payday: number
     stepUp: number
+    /** 연수익 체크. 꺼져 있으면 returnBp 는 기억만 하고 계산에 쓰지 않는다. */
+    returnOn: boolean
+    /** 연수익률 × 100 (3.25% → 325), 0 ~ MAX_RETURN_BP */
+    returnBp: number
 }
 
 export type PlanPatch = Partial<Omit<Plan, 'id'>>
@@ -30,6 +34,8 @@ export function createPlan(id: string): Plan {
         asset: 0,
         payday: 21,
         stepUp: 100_000,
+        returnOn: false,
+        returnBp: 0,
     }
 }
 
@@ -83,8 +89,18 @@ function isPlan(value: unknown): value is Plan {
         Number.isInteger(p.payday) &&
         (p.payday as number) >= 1 &&
         (p.payday as number) <= 31 &&
-        isMoney(p.stepUp)
+        isMoney(p.stepUp) &&
+        typeof p.returnOn === 'boolean' &&
+        Number.isInteger(p.returnBp) &&
+        (p.returnBp as number) >= 0 &&
+        (p.returnBp as number) <= MAX_RETURN_BP
     )
+}
+
+/** 연수익이 생기기 전에 저장된 플랜은 '연수익 꺼짐' 으로 채워 읽는다. */
+function withReturnDefaults(value: unknown): unknown {
+    if (typeof value !== 'object' || value === null) return value
+    return { returnOn: false, returnBp: 0, ...value }
 }
 
 /** 저장된 JSON 을 검증해 읽는다. 쓸 수 있는 플랜이 하나도 없으면 null. */
@@ -101,7 +117,10 @@ export function parseState(raw: string | null): PlansState | null {
     if (!Array.isArray(plans)) return null
     // id 가 겹치면 탭 선택·삭제가 꼬이므로 처음 것만 남긴다.
     const seen = new Set<string>()
-    const valid = plans.filter(isPlan).filter(p => !seen.has(p.id) && seen.add(p.id))
+    const valid = plans
+        .map(withReturnDefaults)
+        .filter(isPlan)
+        .filter(p => !seen.has(p.id) && seen.add(p.id))
     if (valid.length === 0) return null
     const active = valid.find(p => p.id === activeId) ?? valid[0]
     return { plans: valid, activeId: active.id }

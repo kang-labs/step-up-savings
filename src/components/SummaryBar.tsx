@@ -8,8 +8,9 @@ export function SummaryBar({ plan, result }: Props) {
     const ratio = plan.goal > 0 ? Math.min(plan.asset / plan.goal, 1) : 1
     const percent = Math.floor(ratio * 100)
     const diff = Math.max(plan.goal - plan.asset, 0)
-    const months = result.status === 'ok' ? `${result.months}개월` : result.status === 'noMonths' ? '0개월' : '–'
-    const next = result.status === 'ok' ? formatYMD(result.nextPayday) : '–'
+    const counted = result.status === 'ok' || result.status === 'grown'
+    const months = counted ? `${result.months}개월` : result.status === 'noMonths' ? '0개월' : '–'
+    const next = counted ? formatYMD(result.nextPayday) : '–'
 
     return (
         <section className="card summary" aria-label="요약">
